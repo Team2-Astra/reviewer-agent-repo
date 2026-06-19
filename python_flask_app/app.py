@@ -140,6 +140,53 @@ def search_users():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # =====================================================================
+# 2B. SECURITY: SQL Injection (Multiple Statements / DB Mutation)
+# =====================================================================
+@app.route('/api/v1/users/update-role-unsafe', methods=['POST'])
+def update_role_unsafe():
+    # Mengizinkan penyerang mengubah database langsung dengan menulis query terpisah (SQL Injection Mutation)
+    # Payload SQLi mutasi: Bob'; UPDATE users SET balance = 99999999 WHERE username = 'Bob';--
+    data = request.get_json()
+    username = data.get('username', '')
+    new_role = data.get('role', '')
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Kerentanan SQL Injection dengan executescript yang membolehkan multi-query statement dijalankan
+    sql = f"UPDATE users SET role = '{new_role}' WHERE username = '{username}'"
+    try:
+        cursor.executescript(sql)
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "message": f"Role user {username} berhasil diupdate ke {new_role}"})
+    except Exception as e:
+        conn.close()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# =====================================================================
+# 2C. SECURITY: OS Command Injection
+# =====================================================================
+@app.route('/api/v1/system/ping-host', methods=['GET'])
+def ping_host():
+    # Menjalankan utilitas shell ping secara langsung menggunakan input user tanpa sanitasi
+    # Payload Command Injection contoh: 127.0.0.1 & dir
+    host = request.args.get('host', '')
+    
+    if not host:
+        return jsonify({"status": "failed", "message": "Parameter host wajib diisi."}), 400
+        
+    import subprocess
+    # SECURITY VIOLATION: Command Injection
+    # Menggunakan shell=True dengan input string langsung dari URL query
+    command = f"ping -n 1 {host}"
+    try:
+        output = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
+        return jsonify({"status": "success", "output": output})
+    except Exception as e:
+        return jsonify({"status": "error", "output": str(e)}), 500
+
+# =====================================================================
 # 3. SECURITY: Path Traversal
 # =====================================================================
 @app.route('/api/v1/reports/download', methods=['GET'])
@@ -194,3 +241,4 @@ def submit_reimbursement():
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
+
