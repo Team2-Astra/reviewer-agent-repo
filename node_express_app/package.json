@@ -1,0 +1,12 @@
+{
+  "name": "node-express-fraud-app",
+  "version": "1.0.0",
+  "description": "Node.js Express App for auditing and reviewing logic fraud cases",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

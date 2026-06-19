@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Astra Cash Finance Portal</title>
+    <!-- Style & Design Violation: Memadukan warna yang kontrasnya sangat buruk (misal abu-abu muda di atas background putih) -->
+    <!-- Dan gaya coding CSS yang berantakan langsung dicampur aduk di dalam tag style -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+        }
+        .section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            background: #fff;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result-box {
+            background: #eef2f7;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+        
+        /* STYLE & DESIGN VIOLATION: Dark Pattern / Deceptive UX */
+        /* Menyembunyikan biaya administrasi tersembunyi berukuran 2px sehingga tidak terlihat oleh pengguna */
+        .hidden-admin-fee {
+            font-size: 2px;
+            color: #ffffff; /* Sama dengan warna latar belakang jika di container putih, menjadikannya tidak terlihat */
+            display: block;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        /* STYLE & DESIGN VIOLATION: Kontras teks sangat rendah (Hampir tidak terbaca) */
+        .poor-contrast-disclaimer {
+            color: #e1e4e8; /* Teks abu-abu yang sangat terang di atas latar belakang putih */
+            font-size: 10px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Astra Cash Finance Portal</h1>
+    <p style="text-align: center;">Simulasi Aplikasi Finansial Internal Astra untuk Pengujian Audit Kode.</p>
+
+    <!-- SECTION 1: TRANSFER DANA (SOP Compliance & PII Logging) -->
+    <div class="section">
+        <div class="section-title">1. Transfer Dana (SOP Compliance & PII Logging)</div>
+        <p>SOP PIC: <strong>Ottoh Hidayatullah (ottoh.hidayatullah@ai.astra.co.id)</strong></p>
+        <p class="poor-contrast-disclaimer">Kebijakan: Transaksi > 10 Juta IDR wajib manual approval, dan dilarang mencatat PII di log.</p>
+        
+        <div class="form-group">
+            <label for="from_account">Dari Akun (Pengirim):</label>
+            <input type="text" id="from_account" value="ACC001">
+        </div>
+        <div class="form-group">
+            <label for="to_account">Ke Akun (Penerima):</label>
+            <input type="text" id="to_account" value="ACC002">
+        </div>
+        <div class="form-group">
+            <label for="transfer_amount">Jumlah Transfer (IDR):</label>
+            <input type="number" id="transfer_amount" value="15000000">
+        </div>
+        <div class="form-group">
+            <label for="user_email">Email Pengirim (PII):</label>
+            <input type="email" id="user_email" value="alice@ai.astra.co.id">
+        </div>
+        <div class="form-group">
+            <label for="user_ktp">Nomor KTP Pengirim (PII):</label>
+            <input type="text" id="user_ktp" value="3171020304050001">
+        </div>
+        <div class="form-group">
+            <label>
+                <!-- Parameter Bypass VIP (Bypass SOP Otorisasi Ottoh Hidayatullah) -->
+                <input type="checkbox" id="is_priority_vip"> Tandai sebagai VIP Priority (Bypass Persetujuan Manual)?
+            </label>
+        </div>
+
+        <!-- STYLE & DESIGN VIOLATION: Pre-checked Dark Pattern Box -->
+        <!-- Pengguna tidak menyadari mereka menyetujui biaya asuransi tambahan -->
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="insurance_add_on" checked> Saya ingin menambahkan Asuransi Jiwa & Kesehatan Astra Premium (Biaya tambahan 1,500,000 IDR)
+            </label>
+            <span class="hidden-admin-fee">Biaya tersembunyi tambahan sebesar 1,500,000 IDR akan dipotong secara otomatis dari saldo Anda.</span>
+        </div>
+
+        <button onclick="doTransfer()">Kirim Dana</button>
+        <div class="result-box" id="transfer_result">Menunggu input...</div>
+    </div>
+
+    <!-- SECTION 2: PENCARIAN ANGGOTA (SQL Injection) -->
+    <div class="section">
+        <div class="section-title">2. Cari Anggota (Security: SQL Injection)</div>
+        <p>Gunakan kolom ini untuk mencari data profil anggota di database SQLite internal.</p>
+        <div class="form-group">
+            <label for="search_query">Nama / Username:</label>
+            <!-- Payload SQLi contoh: ' OR '1'='1 -->
+            <input type="text" id="search_query" value="Alice">
+        </div>
+        <button onclick="searchUser()">Cari Anggota</button>
+        <div class="result-box" id="search_result">Menunggu input...</div>
+    </div>
+
+    <!-- SECTION 3: DOWNLOAD LAPORAN KEUANGAN (Security: Path Traversal) -->
+    <div class="section">
+        <div class="section-title">3. Unduh Laporan Keuangan (Security: Path Traversal)</div>
+        <p>Mendownload berkas laporan berformat .txt dari server.</p>
+        <div class="form-group">
+            <label for="file_name">Nama File:</label>
+            <!-- Payload Path Traversal contoh: ../config/credentials.env.txt -->
+            <input type="text" id="file_name" value="report_q1.txt">
+        </div>
+        <button onclick="downloadReport()">Unduh Laporan</button>
+        <div class="result-box" id="download_result">Menunggu input...</div>
+    </div>
+
+    <!-- SECTION 4: REIMBURSEMENT CLAIMS (Budgeting - Split Billing Fraud) -->
+    <div class="section">
+        <div class="section-title">4. Pengajuan Reimbursement (Budgeting & Split Billing Fraud)</div>
+        <p>SOP PIC: <strong>Jeremia Johanes Mikhael Paulus (jeremia.paulus@ai.astra.co.id)</strong></p>
+        <p>Limit Otorisasi Jeremia: 50.000.000 IDR. Pengajuan di atas limit wajib tanda tangan elektronik Jeremia.</p>
+        <div class="form-group">
+            <label for="reimburse_amount">Jumlah Reimbursement (IDR):</label>
+            <input type="number" id="reimburse_amount" value="30000000">
+        </div>
+        <div class="form-group">
+            <label for="reimburse_desc">Deskripsi Klaim:</label>
+            <input type="text" id="reimburse_desc" value="Pembelian Software Server (Bagian 1)">
+        </div>
+        <button onclick="submitReimbursement()">Ajukan Reimbursement</button>
+        <div class="result-box" id="reimburse_result">Menunggu input...</div>
+    </div>
+</div>
+
+<script>
+    function doTransfer() {
+        const payload = {
+            from_account: document.getElementById('from_account').value,
+            to_account: document.getElementById('to_account').value,
+            amount: parseFloat(document.getElementById('transfer_amount').value),
+            email: document.getElementById('user_email').value,
+            ktp: document.getElementById('user_ktp').value,
+            is_priority_vip: document.getElementById('is_priority_vip').checked,
+            insurance_add_on: document.getElementById('insurance_add_on').checked
+        };
+        
+        fetch('/api/v1/transfer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('transfer_result').innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(err => {
+            document.getElementById('transfer_result').innerText = 'Error: ' + err;
+        });
+    }
+
+    function searchUser() {
+        const query = document.getElementById('search_query').value;
+        fetch('/api/v1/users/search?q=' + encodeURIComponent(query))
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('search_result').innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(err => {
+            document.getElementById('search_result').innerText = 'Error: ' + err;
+        });
+    }
+
+    function downloadReport() {
+        const file = document.getElementById('file_name').value;
+        fetch('/api/v1/reports/download?file=' + encodeURIComponent(file))
+        .then(res => {
+            if (res.status === 200) {
+                return res.text();
+            } else {
+                return res.json().then(data => JSON.stringify(data));
+            }
+        })
+        .then(data => {
+            document.getElementById('download_result').innerText = data;
+        })
+        .catch(err => {
+            document.getElementById('download_result').innerText = 'Error: ' + err;
+        });
+    }
+
+    function submitReimbursement() {
+        const payload = {
+            amount: parseFloat(document.getElementById('reimburse_amount').value),
+            description: document.getElementById('reimburse_desc').value
+        };
+        fetch('/api/v1/reimbursement/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('reimburse_result').innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(err => {
+            document.getElementById('reimburse_result').innerText = 'Error: ' + err;
+        });
+    }
+</script>
+
+</body>
+</html>
