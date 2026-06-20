@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from flask import Flask, request, jsonify, render_template, send_file
+from flask import Flask, request, jsonify, render_template, send_file, render_template_string
 
 app = Flask(__name__)
 
@@ -234,6 +234,82 @@ def submit_reimbursement():
         "approved_reimbursement_with_markup": final_amount,
         "note": "Reimbursement berhasil didaftarkan. Dana akan segera dikirim."
     })
+
+# =====================================================================
+# 5. CODE WRITING & EFFICIENCY: Looping Berlebih & Unclean Code
+# =====================================================================
+@app.route('/api/v1/users/audit-inefficient', methods=['GET'])
+def audit_inefficient():
+    # KODE TIDAK EFISIEN: Pencarian user menggunakan multi-nested loop O(N^2) yang berlebihan
+    # alih-alih menggunakan filter query WHERE di database SQL secara langsung.
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, balance, role FROM users")
+    all_users = cursor.fetchall()
+    
+    audit_results = []
+    # Nested loop O(N^2) untuk mencocokkan setiap user dengan dirinya sendiri
+    for u1 in all_users:
+        for u2 in all_users:
+            if u1[0] == u2[0]:
+                # Loop ketiga O(N^3) yang tidak perlu untuk simulasi verifikasi dummy
+                for i in range(100):
+                    dummy_val = u1[1] + str(i)
+                audit_results.append({
+                    "user_id": u1[0],
+                    "username": u1[1],
+                    "matched_verify": True
+                })
+    
+    # UNCLEAN / DUPLICATE CODE:
+    # Mengulangi blok logika pemformatan data yang sama persis sebanyak 2 kali (Redundant Copy-Paste)
+    formatted_data = []
+    for item in audit_results:
+        formatted_data.append({
+            "id_check": item["user_id"],
+            "name": item["username"],
+            "status": "VALIDATED"
+        })
+        
+    # Copy paste block yang sama persis
+    duplicate_formatted_data = []
+    for item in audit_results:
+        duplicate_formatted_data.append({
+            "id_check": item["user_id"],
+            "name": item["username"],
+            "status": "VALIDATED"
+        })
+        
+    conn.close()
+    return jsonify({
+        "status": "success", 
+        "efficiency_warning": "O(N^3) complexity processing used", 
+        "data": formatted_data
+    })
+
+
+# =====================================================================
+# 6. LIBRARY & DEPRECATED API: Insecure XML Processing (XXE Simulation)
+# =====================================================================
+@app.route('/api/v1/xml/parse-unsafe', methods=['POST'])
+def parse_xml_unsafe():
+    # KERENTANAN LIBRARY: Menggunakan parser xml parsing default (xml.etree.ElementTree)
+    # yang rentan terhadap XML External Entity (XXE) injection jika memproses entitas eksternal.
+    xml_data = request.data
+    
+    import xml.etree.ElementTree as ET
+    
+    # KODE TIDAK AMAN / UNCLEAN:
+    # Memproses XML langsung dari input user tanpa mematikan fitur entity resolution/external DTD.
+    try:
+        # Pustaka bawaan ElementTree di Python secara default membatasi XXE, namun
+        # simulasi ini menunjukkan parser yang rentan tanpa pertahanan (e.g. defusedxml).
+        root = ET.fromstring(xml_data)
+        elements = {child.tag: child.text for child in root}
+        return jsonify({"status": "success", "parsed": elements})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
 
 # CODE WRITING & DIRECTORY STRUCTURE VIOLATIONS:
 # Spasi berantakan, kode tidak terstruktur, import diletakkan di tengah script (jika ada),
